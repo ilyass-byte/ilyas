@@ -177,6 +177,20 @@ class AppLocalizations extends ChangeNotifier {
       'account_settings': 'Account Settings',
       'security_settings': 'Security Settings',
       'general_settings': 'General Settings',
+      'biometric_authentication': 'Biometric Authentication',
+      'pin_protection': 'PIN Protection',
+      'two_factor_authentication': 'Two-Factor Authentication',
+      'auto_lock': 'Auto Lock',
+      'password_strength_indicator': 'Password Strength Indicator',
+      'login_notifications': 'Login Notifications',
+      'security_center': 'Security Center',
+      'protect_account_data': 'Protect your account and data',
+      'authentication': 'Authentication',
+      'privacy_protection': 'Privacy & Protection',
+      'security_monitoring': 'Security Monitoring',
+      'quick_actions': 'Quick Actions',
+      'security_log': 'Security Log',
+      'security_checkup': 'Security Checkup',
 
       // Messages
       'task_created_successfully': 'Task created successfully',
@@ -204,6 +218,22 @@ class AppLocalizations extends ChangeNotifier {
       'download': 'Download',
       'upload': 'Upload',
       'print': 'Print',
+
+      // Backup
+      'backup': 'Backup',
+      'backup_data': 'Backup Data',
+      'restore': 'Restore',
+      'restore_backup': 'Restore Backup',
+      'create_backup': 'Create Backup',
+      'backup_created': 'Backup Created Successfully',
+      'backup_restored': 'Data Restored Successfully',
+      'auto_backup': 'Auto Backup',
+      'backup_settings': 'Backup Settings',
+      'backup_info': 'Backup Information',
+      'last_backup': 'Last Backup',
+      'backup_size': 'Backup Size',
+      'include_settings': 'Include Settings',
+      'cloud_sync': 'Cloud Sync',
 
       // Statistics
       'total': 'Total',

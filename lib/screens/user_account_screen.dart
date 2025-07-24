@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import '../core/language.dart';
 import 'edit_profile_screen.dart';
+import 'security_settings_screen.dart';
+import 'change_password_screen.dart';
+import 'privacy_settings_screen.dart';
+import 'backup_screen.dart';
 
 class UserAccountScreen extends StatefulWidget {
   const UserAccountScreen({super.key});
@@ -88,81 +92,259 @@ class _UserAccountScreenState extends State<UserAccountScreen>
     final currentPasswordController = TextEditingController();
     final newPasswordController = TextEditingController();
     final confirmPasswordController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    bool isCurrentPasswordVisible = false;
+    bool isNewPasswordVisible = false;
+    bool isConfirmPasswordVisible = false;
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: const Text(
-            'Change Password',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF2D3748),
-            ),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: currentPasswordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Current Password',
-                  border: OutlineInputBorder(),
-                ),
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: newPasswordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'New Password',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: confirmPasswordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Confirm New Password',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                // Validate and change password logic here
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Password changed successfully'),
-                    backgroundColor: Colors.green,
+              title: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE91E63).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.lock_rounded,
+                      color: Color(0xFFE91E63),
+                      size: 24,
+                    ),
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF667EEA),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  const SizedBox(width: 12),
+                  Text(
+                    AppLocalizations.translate('change_password'),
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF2D3748),
+                    ),
+                  ),
+                ],
+              ),
+              content: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Current Password Field
+                    TextFormField(
+                      controller: currentPasswordController,
+                      obscureText: !isCurrentPasswordVisible,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Current password is required';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Current Password',
+                        prefixIcon: const Icon(Icons.lock_outline_rounded),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            isCurrentPasswordVisible
+                                ? Icons.visibility_off_rounded
+                                : Icons.visibility_rounded,
+                          ),
+                          onPressed: () {
+                            setDialogState(() {
+                              isCurrentPasswordVisible =
+                                  !isCurrentPasswordVisible;
+                            });
+                          },
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFE91E63),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // New Password Field
+                    TextFormField(
+                      controller: newPasswordController,
+                      obscureText: !isNewPasswordVisible,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'New password is required';
+                        }
+                        if (value.length < 6) {
+                          return 'Password must be at least 6 characters';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'New Password',
+                        prefixIcon: const Icon(Icons.lock_rounded),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            isNewPasswordVisible
+                                ? Icons.visibility_off_rounded
+                                : Icons.visibility_rounded,
+                          ),
+                          onPressed: () {
+                            setDialogState(() {
+                              isNewPasswordVisible = !isNewPasswordVisible;
+                            });
+                          },
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFE91E63),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Confirm Password Field
+                    TextFormField(
+                      controller: confirmPasswordController,
+                      obscureText: !isConfirmPasswordVisible,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please confirm your password';
+                        }
+                        if (value != newPasswordController.text) {
+                          return 'Passwords do not match';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Confirm New Password',
+                        prefixIcon: const Icon(Icons.lock_reset_rounded),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            isConfirmPasswordVisible
+                                ? Icons.visibility_off_rounded
+                                : Icons.visibility_rounded,
+                          ),
+                          onPressed: () {
+                            setDialogState(() {
+                              isConfirmPasswordVisible =
+                                  !isConfirmPasswordVisible;
+                            });
+                          },
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFE91E63),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              child: const Text('Change'),
-            ),
-          ],
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    AppLocalizations.translate('cancel'),
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (formKey.currentState!.validate()) {
+                      // Simulate password change process
+                      _changePassword(
+                        currentPasswordController.text,
+                        newPasswordController.text,
+                      );
+                      Navigator.pop(context);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFE91E63),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
+                  ),
+                  child: const Text('Change Password'),
+                ),
+              ],
+            );
+          },
         );
       },
     );
+  }
+
+  void _changePassword(String currentPassword, String newPassword) {
+    // Simulate password validation and change
+    // In a real app, you would validate the current password against your backend
+
+    // Show loading indicator
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Row(
+          children: [
+            SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+            ),
+            SizedBox(width: 12),
+            Text('Changing password...'),
+          ],
+        ),
+        backgroundColor: Colors.orange,
+        duration: Duration(seconds: 2),
+      ),
+    );
+
+    // Simulate API call delay
+    Future.delayed(const Duration(seconds: 2), () {
+      // Check if widget is still mounted before using context
+      if (mounted) {
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.check_circle_rounded, color: Colors.white),
+                SizedBox(width: 12),
+                Text('Password changed successfully!'),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    });
   }
 
   @override
@@ -415,7 +597,12 @@ class _UserAccountScreenState extends State<UserAccountScreen>
           title: 'Security Settings',
           subtitle: 'Manage password and two-factor authentication',
           onTap: () {
-            // Navigate to security settings
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const SecuritySettingsScreen(),
+              ),
+            );
           },
           color: const Color(0xFFFF9800),
         ),
@@ -426,7 +613,93 @@ class _UserAccountScreenState extends State<UserAccountScreen>
           icon: Icons.lock_rounded,
           title: 'Change Password',
           subtitle: 'Update your account password',
-          onTap: _showChangePasswordDialog,
+          onTap: () {
+            // Show options: Quick change or Full screen
+            showModalBottomSheet(
+              context: context,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              builder:
+                  (context) => Container(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade300,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          'Change Password Options',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF2D3748),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        ListTile(
+                          leading: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: const Color(
+                                0xFFE91E63,
+                              ).withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.speed_rounded,
+                              color: Color(0xFFE91E63),
+                            ),
+                          ),
+                          title: const Text('Quick Change'),
+                          subtitle: const Text('Change password with dialog'),
+                          onTap: () {
+                            Navigator.pop(context);
+                            _showChangePasswordDialog();
+                          },
+                        ),
+                        ListTile(
+                          leading: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: const Color(
+                                0xFFE91E63,
+                              ).withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.security_rounded,
+                              color: Color(0xFFE91E63),
+                            ),
+                          ),
+                          title: const Text('Full Screen'),
+                          subtitle: const Text(
+                            'Detailed password change screen',
+                          ),
+                          onTap: () {
+                            Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => const ChangePasswordScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                    ),
+                  ),
+            );
+          },
           color: const Color(0xFFE91E63),
         ),
 
@@ -437,7 +710,12 @@ class _UserAccountScreenState extends State<UserAccountScreen>
           title: 'Privacy',
           subtitle: 'Privacy settings and data protection',
           onTap: () {
-            // Navigate to privacy settings
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const PrivacySettingsScreen(),
+              ),
+            );
           },
           color: const Color(0xFF9C27B0),
         ),
@@ -446,10 +724,13 @@ class _UserAccountScreenState extends State<UserAccountScreen>
 
         _buildOptionCard(
           icon: Icons.backup_rounded,
-          title: 'Backup',
+          title: AppLocalizations.translate('backup'),
           subtitle: 'Backup and restore your data',
           onTap: () {
-            // Navigate to backup settings
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const BackupScreen()),
+            );
           },
           color: const Color(0xFF00BCD4),
         ),

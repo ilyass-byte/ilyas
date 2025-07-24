@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'user_account_screen.dart';
 import 'app_info_screen.dart';
 import 'help_screen.dart';
+import 'change_password_screen.dart';
+import 'backup_screen.dart';
 import '../core/language.dart';
 import '../core/settings_manager.dart';
 import '../localized_app.dart';
@@ -183,6 +185,76 @@ class _SettingsScreenState extends State<SettingsScreen>
                       ),
                     ),
                     const SizedBox(height: 20),
+
+                    // Quick Actions
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => const ChangePasswordScreen(),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white.withValues(
+                                alpha: 0.2,
+                              ),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            icon: const Icon(Icons.lock_rounded, size: 18),
+                            label: const Text(
+                              'Password',
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => const UserAccountScreen(),
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white.withValues(
+                                alpha: 0.2,
+                              ),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            icon: const Icon(
+                              Icons.account_circle_rounded,
+                              size: 18,
+                            ),
+                            label: const Text(
+                              'Account',
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 16),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -517,6 +589,22 @@ class _SettingsScreenState extends State<SettingsScreen>
             );
           },
           color: const Color(0xFFFF9800),
+        ),
+
+        const SizedBox(height: 16),
+
+        // Backup & Restore
+        _buildSettingCard(
+          icon: Icons.backup_rounded,
+          title: AppLocalizations.translate('backup'),
+          subtitle: 'Backup and restore your data',
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const BackupScreen()),
+            );
+          },
+          color: const Color(0xFF00BCD4),
         ),
 
         const SizedBox(height: 16),
