@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/language.dart';
+import '../core/profile_manager.dart';
+import '../models/user_profile.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -15,14 +17,12 @@ class _EditProfileScreenState extends State<EditProfileScreen>
   late Animation<double> _fadeAnimation;
 
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController(text: 'Ahmed Mohamed');
-  final _emailController = TextEditingController(
-    text: 'ahmed.mohamed@example.com',
-  );
-  final _phoneController = TextEditingController(text: '+20 123 456 7890');
-  final _bioController = TextEditingController(
-    text: 'Task management enthusiast',
-  );
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _bioController = TextEditingController();
+
+  final ProfileManager _profileManager = ProfileManager.instance;
 
   bool _isLoading = false;
 
@@ -43,6 +43,25 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     );
 
     _animationController.forward();
+    _loadProfileData();
+  }
+
+  void _loadProfileData() async {
+    // Initialize profile manager if not already done
+    if (!_profileManager.isInitialized) {
+      await _profileManager.initialize();
+    }
+
+    // Load current profile data into controllers
+    final profile = _profileManager.currentProfile;
+    _nameController.text = profile.name;
+    _emailController.text = profile.email;
+    _phoneController.text = profile.phone;
+    _bioController.text = profile.bio;
+
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -61,30 +80,75 @@ class _EditProfileScreenState extends State<EditProfileScreen>
         _isLoading = true;
       });
 
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
-
-      setState(() {
-        _isLoading = false;
-      });
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.translate('profile_updated_successfully'),
-            ),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
+      try {
+        // Create updated profile with form data
+        final updatedProfile = UserProfile(
+          name: _nameController.text.trim(),
+          email: _emailController.text.trim(),
+          phone: _phoneController.text.trim(),
+          bio: _bioController.text.trim(),
+          profileImagePath: _profileManager.currentProfile.profileImagePath,
         );
-        Navigator.pop(
-          context,
-          true,
-        ); // Return true to indicate profile was updated
+
+        // Save the profile
+        final success = await _profileManager.saveProfile(updatedProfile);
+
+        setState(() {
+          _isLoading = false;
+        });
+
+        if (mounted) {
+          if (success) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  AppLocalizations.translate('profile_updated_successfully'),
+                ),
+                backgroundColor: Colors.green,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            );
+            Navigator.pop(
+              context,
+              true,
+            ); // Return true to indicate profile was updated
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  AppLocalizations.translate('error_saving_profile'),
+                ),
+                backgroundColor: Colors.red,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        setState(() {
+          _isLoading = false;
+        });
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '${AppLocalizations.translate('error_saving_profile')}: $e',
+              ),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          );
+        }
       }
     }
   }

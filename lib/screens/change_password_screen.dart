@@ -150,7 +150,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFE91E63).withValues(alpha: 0.3),
+                            color: const Color(
+                              0xFFE91E63,
+                            ).withValues(alpha: 0.3),
                             blurRadius: 16,
                             offset: const Offset(0, 8),
                           ),
@@ -231,7 +233,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
                               isVisible: _isCurrentPasswordVisible,
                               onVisibilityToggle: () {
                                 setState(() {
-                                  _isCurrentPasswordVisible = !_isCurrentPasswordVisible;
+                                  _isCurrentPasswordVisible =
+                                      !_isCurrentPasswordVisible;
                                 });
                               },
                               validator: (value) {
@@ -252,7 +255,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
                               isVisible: _isNewPasswordVisible,
                               onVisibilityToggle: () {
                                 setState(() {
-                                  _isNewPasswordVisible = !_isNewPasswordVisible;
+                                  _isNewPasswordVisible =
+                                      !_isNewPasswordVisible;
                                 });
                               },
                               validator: (value) {
@@ -276,7 +280,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
                               isVisible: _isConfirmPasswordVisible,
                               onVisibilityToggle: () {
                                 setState(() {
-                                  _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                                  _isConfirmPasswordVisible =
+                                      !_isConfirmPasswordVisible;
                                 });
                               },
                               validator: (value) {
@@ -348,35 +353,42 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen>
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFFE91E63),
                                   foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   elevation: 4,
                                 ),
-                                child: _isLoading
-                                    ? const Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          SizedBox(
-                                            width: 20,
-                                            height: 20,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                child:
+                                    _isLoading
+                                        ? const Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            SizedBox(
+                                              width: 20,
+                                              height: 20,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                      Color
+                                                    >(Colors.white),
+                                              ),
                                             ),
+                                            SizedBox(width: 12),
+                                            Text('Changing Password...'),
+                                          ],
+                                        )
+                                        : const Text(
+                                          'Change Password',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                          SizedBox(width: 12),
-                                          Text('Changing Password...'),
-                                        ],
-                                      )
-                                    : const Text(
-                                        'Change Password',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
                                         ),
-                                      ),
                               ),
                             ),
                           ],

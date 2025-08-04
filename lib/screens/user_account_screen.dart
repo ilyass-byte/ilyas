@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/language.dart';
+import '../core/profile_manager.dart';
+import '../models/user_profile.dart';
 import 'edit_profile_screen.dart';
 import 'security_settings_screen.dart';
 import 'change_password_screen.dart';
@@ -19,6 +21,9 @@ class _UserAccountScreenState extends State<UserAccountScreen>
   late Animation<double> _slideAnimation;
   late Animation<double> _fadeAnimation;
 
+  final ProfileManager _profileManager = ProfileManager.instance;
+  UserProfile? _currentProfile;
+
   @override
   void initState() {
     super.initState();
@@ -36,6 +41,21 @@ class _UserAccountScreenState extends State<UserAccountScreen>
     );
 
     _animationController.forward();
+    _loadProfileData();
+  }
+
+  void _loadProfileData() async {
+    // Initialize profile manager if not already done
+    if (!_profileManager.isInitialized) {
+      await _profileManager.initialize();
+    }
+
+    // Load current profile data
+    _currentProfile = _profileManager.currentProfile;
+
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -461,22 +481,25 @@ class _UserAccountScreenState extends State<UserAccountScreen>
                 ),
               ),
               const SizedBox(width: 20),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Ahmed Mohamed',
-                      style: TextStyle(
+                      _currentProfile?.name ?? 'Ahmed Mohamed',
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
-                      'ahmed.mohamed@example.com',
-                      style: TextStyle(fontSize: 16, color: Colors.white70),
+                      _currentProfile?.email ?? 'ahmed.mohamed@example.com',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.white70,
+                      ),
                     ),
                     SizedBox(height: 8),
                     Row(
@@ -583,8 +606,8 @@ class _UserAccountScreenState extends State<UserAccountScreen>
             );
 
             if (result == true) {
-              // Profile was updated, refresh the UI if needed
-              setState(() {});
+              // Profile was updated, refresh the UI with new data
+              _loadProfileData();
             }
           },
           color: const Color(0xFF6B7EE8),

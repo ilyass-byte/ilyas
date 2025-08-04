@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/language.dart';
+import '../core/biometric_manager.dart';
+import 'package:local_auth/local_auth.dart';
 
 class SecuritySettingsScreen extends StatefulWidget {
   const SecuritySettingsScreen({super.key});

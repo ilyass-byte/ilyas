@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'localized_app.dart';
+import 'core/profile_manager.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize ProfileManager
+  await ProfileManager.instance.initialize();
+
   runApp(const MyApp());
 }
 

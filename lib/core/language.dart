@@ -143,6 +143,7 @@ class AppLocalizations extends ChangeNotifier {
       'privacy_settings': 'Privacy Settings',
       'control_privacy': 'Control your privacy and data settings',
       'profile_updated_successfully': 'Profile updated successfully',
+      'error_saving_profile': 'Error saving profile',
       'update_personal_info': 'Update personal information and profile picture',
 
       // Validation Messages
